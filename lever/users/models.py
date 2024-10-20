@@ -12,7 +12,7 @@ import random
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models
-
+from django.utils.translation import gettext as _
 
 class User(AbstractUser):
     """
@@ -54,3 +54,48 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"pk": self.id})
+
+
+
+
+class Company(models.Model):
+    name = models.CharField(_('company name'), max_length=256,unique=True)
+    subdomain = models.CharField(_('Company Subdomain'), max_length=256,unique=True)
+    created_at = models.DateTimeField(_('craeted at'),default=timezone.now)
+
+    def __str__(self):
+        return "Company  : " + self.name
+
+
+class Client(models.Model):
+    name = models.CharField(_('Client name'), max_length=256)
+    national_id = models.CharField(_('Client ID'), max_length=256,unique=True)
+    email = EmailField(_("email address"), unique=True, validators=[
+        RegexValidator(regex=r'^(?![.-])[a-zA-Z0-9._%+-]+(?<![.-])@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                       message=_("Enter a valid email address."))
+        ])
+    phone_number = PhoneNumberField(_("Phone Number of user"),unique=True,blank=True,null=True)
+    paid_money = models.FloatField(_('Money which user already paid '),default=0,null=True,blank=True)
+    money_left = models.FloatField(_('left Money which user must  pay '),default=0,null=True,blank=True)
+
+    created_at = models.DateTimeField(_('craeted at'),default=timezone.now)
+    companies = models.ManyToManyField(Company, through='ClientCompany', related_name='clients',null=True,blank=True)
+
+    def __str__(self):
+        return "Client  : " + self.name
+    
+
+
+
+class ClientCompany(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='client_companies')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_clients')
+    class Meta:
+        unique_together = ('client', 'company')
+        verbose_name = _('Client-Company Relationship')
+        verbose_name_plural = _('Client-Company Relationships')
+
+    def __str__(self):
+        return f"{self.client.name} associated with {self.company.name}"
+
+

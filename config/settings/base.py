@@ -28,11 +28,10 @@ TIME_ZONE = "UTC"
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 # from django.utils.translation import gettext_lazy as _
-# LANGUAGES = [
-#     ('en', _('English')),
-#     ('fr-fr', _('French')),
-#     ('pt-br', _('Portuguese')),
-# ]
+LANGUAGES = [
+    ('en', ('English')),
+    ('ar', 'Arabic'),
+]
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
@@ -343,3 +342,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 ALLOWED_HOSTS = ["*"]
+
+
+# run translations
+# django-admin makemessages -l ar
+# django-admin compilemessages
